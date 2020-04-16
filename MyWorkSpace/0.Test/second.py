@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 from tensorflow.keras import preprocessing
 
@@ -21,6 +22,8 @@ EPOCH = 100
 VOCAB_SIZE = len(word_index) + 1
 EMB_SIZE = 128
 
+DATA_OUT_PATH = './data_out/'
+
 
 def train_input_fn():
     dataset = tf.data.Dataset.from_tensor_slices((sequences, label))
@@ -38,7 +41,28 @@ def model_fn(features, labels, mode):
     PREDICT = mode == tf.estimator.ModeKeys.PREDICT
 
     embed_input = tf.keras.layers.Embedding(VOCAB_SIZE, EMB_SIZE)(features)
+    embed_input = tf.reduce_mean(embed_input, axis=1)
+
+    hidden_layer = tf.keras.layers.Dense(128, activation=tf.nn.relu)(embed_input)
+    output_layer = tf.keras.layers.Dense(1)(hidden_layer)
+    output = tf.nn.sigmoid(output_layer)
+
+    loss = tf.losses.mean_squared_error(output, labels)
+
+    if TRAIN:
+        global_step = tf.train.get_global_step()
+        train_op = tf.train.AdamOptimizer(1e-3).minimize(loss, global_step)
+
+        return tf.estimator.EstimatorSpec(
+            mode=mode,
+            train_op=train_op,
+            loss=loss
+        )
 
 
 if __name__ == '__main__':
-    pass
+    if not os.path.exists(DATA_OUT_PATH):
+        os.makedirs(DATA_OUT_PATH)
+
+    estimator = tf.estimator.Estimator(model_fn=model_fn, model_dir=DATA_OUT_PATH+'checkpoint/dnn')
+    estimator.train(train_input_fn)
