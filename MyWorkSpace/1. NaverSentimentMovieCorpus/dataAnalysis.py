@@ -7,6 +7,7 @@ import seaborn as sns
 # from wordcloud import WordCloud
 
 DATA_IN_PATH = './data_in/'
+train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
 
 
 def get_data_size():
@@ -17,14 +18,12 @@ def get_data_size():
 
 
 def get_train_data():
-    train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
     print(train_data.head())
     print('전체 학습 데이터의 개수: {}'.format(len(train_data)))
 
 
 # 훈련 데이터의 각 리뷰 길이 추출
 def get_train_data_review_length():
-    train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
     train_length = train_data['document'].astype(str).apply(len)
     print(train_length.head())
 
@@ -45,7 +44,6 @@ def get_train_data_review_length():
 
 
 def pn_classification():
-    train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
     fig, axe = plt.subplots(ncols=1)
     fig.set_size_inches(6, 3)
     sns.countplot(train_data['label'])
@@ -56,7 +54,6 @@ def pn_classification():
 
 
 def get_train_data_word_count():
-    train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
     train_word_counts = train_data['document'].astype(str).apply(lambda x: len(x.split(' ')))
 
     plt.figure(figsize=(15, 10))
@@ -76,7 +73,6 @@ def get_train_data_word_count():
 
 
 def special_characters_analysis():
-    train_data = pd.read_csv(DATA_IN_PATH + 'ratings_train.txt', header=0, delimiter='\t', quoting=3)
     qmarks = np.mean(train_data['document'].astype(str).apply(lambda x: '?' in x))
     fullstop = np.mean(train_data['document'].astype(str).apply(lambda x: '.' in x))
 
