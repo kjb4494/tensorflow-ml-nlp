@@ -34,7 +34,6 @@ class InheritTokenizer(Tokenizer):
                 spaced += ' ' + ch + ' '
             elif self._is_space(ch):
                 spaced += ' '
-            #
             elif ord(ch) == 0 or ord(ch) == 0xfffd or self._is_control(ch):
                 continue
             else:

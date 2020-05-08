@@ -46,6 +46,7 @@ checkpoint_path = os.path.join(pretrained_path, 'bert_model.ckpt')
 vocab_path = os.path.join(pretrained_path, 'vocab.txt')
 
 train = pd.read_table("nsmc/" + "ratings_train.txt")
+# 테스트 데이터가 너무 많아서 오래 걸리므로 2000개로 줄임
 test = pd.read_table("nsmc/" + "ratings_test.txt", nrows=2000)
 # test = pd.read_table("nsmc/" + "ratings_test.txt")
 

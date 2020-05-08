@@ -1,15 +1,9 @@
-import numpy as np
+import pickle
 
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import animation
-import seaborn as sns
+import numpy as np
 import pandas as pd
-import pickle
-import time
-
-from main import get_feature_map, get_bert_finetuning_model
+from mpl_toolkits.mplot3d import Axes3D
 
 test = pd.read_table("nsmc/" + "ratings_test.txt", nrows=2000)
 with open('./output/bertembedding.pkl', 'rb') as f:
