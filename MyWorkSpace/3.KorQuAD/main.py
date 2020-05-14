@@ -60,7 +60,6 @@ def get_bert_finetunning_model(model):
 def main_train():
     train = korquad.get_data_frame('./input/KorQuAD_v1.0_train.json')
     tokenizer = InheritTokenizer(get_token_dict(vocab_path=vocab_path))
-
     # 토큰화 테스트
     # print(tokenizer.tokenize("한국어 토큰화."), tokenizer.tokenize("잘 되니?"))
 
@@ -160,6 +159,40 @@ def main_test():
         )
 
 
+def self_test():
+    tokenizer = InheritTokenizer(get_token_dict(vocab_path=vocab_path))
+    model = load_trained_model_from_checkpoint(
+        config_path,
+        checkpoint_path,
+        training=False,
+        trainable=True,
+        seq_len=SEQ_LEN
+    )
+    bert_model = get_bert_finetunning_model(model=model)
+    bert_model.load_weights('./output/korquad_wordpiece_3.h5')
+
+    doc = "켄지·디즈·마이크 데일리·스테레오타입스 등 흥행불패 작사·작곡진 눈길! " \
+          "‘특급 솔로 가수’ 엑소 백현(에스엠엔터테인먼트 소속)의 새 앨범에 글로벌 히트메이커들이 참여, 기대감이 증폭되고 있다. " \
+          "오는 25일 발매되는 백현의 두 번째 미니앨범 ‘Delight’(딜라이트)는 타이틀 곡 ‘Candy’(캔디)를 포함한 총 7곡이 수록되어, " \
+          "백현의 감미로운 보컬과 트렌디한 음악 감성으로 전 세계 팬들을 사로잡을 전망이다." \
+          "특히, 이번 앨범에는 타이틀 곡을 작업한 히트메이커 Kenzie(켄지), 인기 작곡가 DEEZ(디즈), " \
+          "미국 유명 프로듀서 Mike Daley(마이크 데일리)를 비롯해, 최정상 프로듀싱팀 Stereotypes(스테레오타입스), " \
+          "세계적인 프로듀서 OMEGA(오메가), 싱어송라이터 Colde(콜드) 등 국내외 뮤지션들이 대거 참여해 한층 완성도를 높였다." \
+          "더불어 백현의 ‘매력 어필송’으로 기대를 모은 타이틀 곡 ‘Candy’는 물결치듯 전개되는 멜로디와 중독적인 신스 사운드가 돋보이는 " \
+          "퓨처리스틱 R&B 곡으로, 가사에는 백현이 지닌 다채로운 매력을 여러 가지 맛의 사탕에 빗대어 표현해 눈길을 끈다." \
+          "한편, 백현의 두 번째 미니앨범 ‘Delight’는 5월 25일 오후 6시 각종 음악 사이트에서 만날 수 있다."
+    question = "딜라이트의 타이틀 곡 알려줘"
+    real_answer = "Candy"
+    predict_letter(
+        bert_model=bert_model,
+        tokenizer=tokenizer,
+        question=question,
+        doc=doc,
+        real_answer=real_answer
+    )
+
+
 if __name__ == '__main__':
     # main_train()
-    main_test()
+    # main_test()
+    self_test()

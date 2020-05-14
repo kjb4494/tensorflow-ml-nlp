@@ -62,6 +62,10 @@ def get_token_dict():
 
 
 def get_bert_finetuning_model(model):
+    # model.inputs 리스트 구성
+    # <tf.Tensor 'Input-Token:0' shape=(?, 128) dtype=float32>,
+    # <tf.Tensor 'Input-Segment:0' shape=(?, 128) dtype=float32>,
+    # <tf.Tensor 'Input-Masked:0' shape=(?, 128) dtype=float32>
     inputs = model.inputs[:2]
     dense = model.layers[-3].output
     outputs = keras.layers.Dense(
@@ -90,10 +94,10 @@ def main():
     tokenizer = InheritTokenizer(get_token_dict())
 
     # 네이버 영화 리뷰 전처리
-    # nsmc_converter = NsmcDataConverter(tokenizer=tokenizer, pandas_data_frame=train, seq_len=SEQ_LEN)
-    # train_x, train_y = nsmc_converter.load_data()
-    # test_x, test_y = nsmc_converter.load_data()
-    # print(train_x)
+    nsmc_converter = NsmcDataConverter(tokenizer=tokenizer, pandas_data_frame=train, seq_len=SEQ_LEN)
+    train_x, train_y = nsmc_converter.load_data()
+    test_x, test_y = nsmc_converter.load_data()
+    print(train_x)
 
     # 문장 전처리
     # sentence_converter = SentenceConverter(tokenizer=tokenizer, seq_len=SEQ_LEN)
@@ -120,9 +124,9 @@ def main():
     # init = tf.variables_initializer([v for v in tf.global_variables() if v.name.split(':')[0] in uninitialized_variables])
     # sess.run(init)
 
-    # bert_model = get_bert_finetuning_model(model)
-    # history = bert_model.fit(train_x, train_y, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1, validation_data=(test_x, test_y), shuffle=True)
-    # bert_model.save_weights('./output/bert.h5')
+    bert_model = get_bert_finetuning_model(model)
+    bert_model.fit(train_x, train_y, epochs=EPOCHS, batch_size=BATCH_SIZE, verbose=1, validation_data=(test_x, test_y), shuffle=True)
+    bert_model.save_weights('./output/bert.h5')
 
     bert_model = get_bert_finetuning_model(model)
     bert_model.load_weights('./output/bert.h5')
